@@ -1,0 +1,13 @@
+---
+owncloud_database:
+  driver: mysql
+  driver_package: php-mysql
+  host: localhost
+  user: owncloud8
+  database: owncloud
+  password: cloudy
+
+owncloud_admin_password: horse-battery-staple
+
+owncloud_auth:
+    enable_ldap: false
