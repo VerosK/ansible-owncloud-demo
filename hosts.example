@@ -1,0 +1,5 @@
+[owncloud]
+ansible-004   ansible_ssh_host=146.185.161.196 droplet_id=14148278
+
+[all:vars]
+ansible_ssh_user=root

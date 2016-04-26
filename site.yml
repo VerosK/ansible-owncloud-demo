@@ -1,0 +1,10 @@
+---
+# This playbook deploys the whole application stack in this site.  
+
+- name: configure and deploy the owncloud
+  hosts: owncloud
+  roles:
+    - role: mysql
+    - role: owncloud
+      tags: owncloud
+

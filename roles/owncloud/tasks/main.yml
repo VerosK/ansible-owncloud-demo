@@ -1,0 +1,96 @@
+---
+# download owncloud
+
+- name: Install owncloud package
+  yum:
+    pkg: '{{item}}'
+    state: installed
+  with_items: owncloud_packages
+  notify: reload apache
+
+- name: Enable port 80
+  firewalld:
+     service: "http"
+     state: enabled
+     zone: public
+     immediate: yes
+     permanent: yes
+  ignore_errors: yes
+
+- name: Check owncloud config
+  file:
+     path: '{{owncloud_deploy_path}}/config/config.php'
+     state: file
+  ignore_errors: yes
+  register: owncloud_config
+
+- name: Create Application Database
+  mysql_db:
+    name: '{{ owncloud_database.database }}'
+    state: present
+    encoding: utf8
+
+- name: Create Application DB User
+  mysql_user:
+    name: '{{ owncloud_database.user }}'
+    password: '{{ owncloud_database.password }}'
+    priv: '{{ owncloud_database.database }}.*:ALL'
+    host: '{{ owncloud_database.host }}'
+    state: present
+
+- name: Create owncloud-7 autoconfig
+  template:
+    src: owncloud.config.j2
+    dest: '{{ owncloud_deploy_path }}/config/autoconfig.php'
+    owner: '{{owncloud_user}}'
+    group: '{{owncloud_group}}'
+    mode: 0444
+  when: owncloud_config|failed
+
+#- name: Allow PHP upload
+#  ini_file: dest=/etc/php.ini backup=yes section=PHP
+#            option=upload_max_filesize value=700M
+#  notify: reload apache
+#
+#- name: Allow PHP POST size
+#  ini_file: dest=/etc/php.ini backup=yes section=PHP
+#            option=post_max_size value=700M
+#  notify: reload apache
+
+#- name: Set PHP memory limit
+#  ini_file: dest=/etc/php.ini backup=yes section=PHP
+#            option=upload_max_filesize value=1024M
+#  notify: reload apache
+
+- name: Set document root to /var/www/html/owncloud
+  lineinfile:
+    backup: yes
+    dest: /etc/httpd/conf/httpd.conf
+    line: 'DocumentRoot "/var/www/html/owncloud/'
+    regexp: '^DocumentRoot'
+    state: present
+  notify: reload apache
+
+#- name: Create redirect from /owncloud
+#  template:
+#    src: httpd-welcome.conf.j2
+#    dest: /etc/httpd/conf.d/welcome.conf
+#  notify: reload apache
+
+- name: Disable redirect from /
+  file:
+    path: /etc/httpd/conf.d/welcome.conf
+    state: absent
+
+- name: Disable LDAP referrals
+  lineinfile: dest=/etc/openldap/ldap.conf 
+         regexp='^#?REFERRALS'
+         line='REFERRALS      off'
+         insertbefore=BOF state=present
+  notify: reload apache
+
+- name: Start http
+  service:
+    name: httpd
+    state: running
+    enabled: true

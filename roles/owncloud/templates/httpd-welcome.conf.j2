@@ -1,0 +1,10 @@
+# 
+# DON'T TOUCH
+# - your changes will be annihilated
+#
+# {{ ansible_managed }}
+
+<LocationMatch "^/+$">
+    Options -Indexes
+    Redirect / /owncloud/
+</LocationMatch>

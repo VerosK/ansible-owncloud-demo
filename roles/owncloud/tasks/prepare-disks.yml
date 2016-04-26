@@ -1,0 +1,32 @@
+---
+# prepare physical disks for owncloud
+
+- name: Check PV sdb
+  shell: pvs {{owncloud_storage}}
+  ignore_errors: yes
+  register: has_sdb
+
+- name: Create PV 
+  shell: pvcreate {{owncloud_storage}}
+  when: has_sdb|failed
+
+- name: Create VG
+  lvg: pvs={{owncloud_storage}} vg=owncloud_data
+
+- name: Create LV
+  lvol: lv=storage vg=owncloud_data size=100%FREE
+  register: lv_create
+
+- name: Install xfs
+  yum: name=xfsprogs state=present
+
+- name: Make filesystem
+  filesystem: dev=/dev/owncloud_data/storage fstype=xfs
+   #force=yes
+#  when: lv_create|changed
+
+- name: Mount storage
+  mount: src=/dev/owncloud_data/storage name=/var/lib/owncloud state=mounted fstype=xfs
+
+- name: Create data directory
+  file: dest=/var/lib/owncloud owner=apache group=apache state=directory mode=0770

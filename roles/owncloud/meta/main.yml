@@ -1,0 +1,26 @@
+---
+dependencies:
+
+  - role: mysql
+  - role: jtyr.yumrepo
+    yumrepo_repos: '{{owncloud_repos}}'
+
+
+galaxy_info:
+  author: verosk
+  description: 'Install and manage ownCloud instance'
+  license: WTFPL
+  min_ansible_version: 1.9
+
+  platforms:
+
+    - name: EL
+      versions:
+        - 7
+
+  galaxy_tags:
+    - cloud
+    - private cloud
+    - file sharing
+    - calendar
+    - web

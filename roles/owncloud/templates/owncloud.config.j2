@@ -1,0 +1,16 @@
+<?php
+
+$AUTOCONFIG = array(
+/* adminlogin */
+"adminlogin" => "admin",
+"adminpass" => "{{ owncloud_admin_password|default('nbusr123') }}",
+
+/* database */
+"dbtype" => "{{ owncloud_database.driver }}",
+"dbname" => "{{ owncloud_database.database }}",
+"dbuser" => "{{ owncloud_database.user }}",
+"dbpass" => "{{ owncloud_database.password }}",
+"dbhost" => "{{ owncloud_database.host }}",
+// "dbtableprefix" => "oc5_",
+// "directory" => "{{ owncloud_storage_dir|default('/var/lib/ownclooud') }}",
+);

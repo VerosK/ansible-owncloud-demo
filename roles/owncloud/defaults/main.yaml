@@ -1,0 +1,22 @@
+owncloud_packages: [owncloud, php-mysql]
+owncloud_deploy_path: /var/www/html/owncloud
+owncloud_user: apache
+owncloud_group: apache
+
+owncloud_repos:
+  epel:
+    name: Extra Packages for Enterprise Linux 7 - $basearch
+    baseurl: http://dl.fedoraproject.org/pub/epel/7/$basearch
+    mirrorlist: https://mirrors.fedoraproject.org/metalink?repo=epel-7&arch=$basearch
+    failovermethod: priority
+    enabled: 1
+    gpgcheck: 1
+    gpgkey: https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-7
+
+  owncloud:
+    name: ownCloud server stable for Centos_7
+    baseurl: http://download.owncloud.org/download/repositories/stable/CentOS_7
+    gpgcheck: 1
+    gpgkey: http://download.owncloud.org/download/repositories/stable/CentOS_7/repodata/repomd.xml.key
+    enabled: yes
+    state: present
